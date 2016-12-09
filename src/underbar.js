@@ -76,12 +76,12 @@
     // implemented for you. Instead of using a standard `for` loop, though,
     // it uses the iteration helper `each`, which you will need to write.
     var result = -1;
+
     _.each(array, function(item, index) {
       if (item === target && result === -1) {
         result = index;
       }
     });
-
     return result;
   };
 
@@ -100,13 +100,9 @@
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-    var doesntPassed = [];
-    for(var i = 0; i < collection.length; i++) {
-      if(!test(collection[i])) {
-        doesntPassed.push(collection[i]);
-      }
-    }
-    return doesntPassed;
+    return _.filter(collection, function(item) {
+      return !test(item);
+    })
   };
 
 
@@ -177,6 +173,7 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+
     var current;
     var skipNext;
     if(arguments.length === 3) {
@@ -328,7 +325,7 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
  _.memoize = function(func) {
-      var result = {};
+    var result = {};
     return function() {
       if (result[JSON.stringify(arguments)] === undefined) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
@@ -353,6 +350,7 @@
     setTimeout(function() {
         result = func.apply(this, argu);
       }, wait)
+
   };
 
 
@@ -389,6 +387,15 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var method;
+    return _.map(collection, function(item) {
+      if(typeof functionOrKey === 'string') {
+        method = item[functionOrKey];
+      } else {
+        method = functionOrKey;
+      }
+      return method.apply(item, args)
+    })
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -396,6 +403,15 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    if(typeof iterator === 'string') {
+      return collection.sort(function(a, b) {
+        return a[iterator] - b[iterator];
+      });
+    } else {
+      return collection.sort(function(a, b) {
+        return iterator(a) - iterator(b);
+      })
+    }
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -404,6 +420,20 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var argumentsArray = Array.prototype.slice.call(arguments);
+    var longestArray = argumentsArray.sort(function(a, b) {
+      return b.length - a.length;
+    })[0].length;
+    var zipped = [];
+    var zippedPrevious = [];
+    for(var i = 0; i < longestArray; i++) {
+      for(var j = 0; j < arguments.length; j++) {
+        zippedPrevious.push(arguments[j][i])
+      }
+      zipped.push(zippedPrevious);
+      zippedPrevious = [];
+    }
+    return zipped;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -411,17 +441,62 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    return _.reduce(nestedArray, function (flat, toFlatten) {
+      if(Array.isArray(toFlatten)) {
+        return flat.concat(_.flatten(toFlatten))
+      } else {
+        return flat.concat(toFlatten)
+      }
+    }, []);
   };
+
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var argumentsArray = Array.prototype.slice.call(arguments);
+    var intersect = [];
+    _.each(argumentsArray[0], function(item) {
+      var isShared = false;
+      for (var i = 1; i < argumentsArray.length; i++) {
+        var array = argumentsArray[i];
+        _.each(array, function(element) {
+          if (item === element) {
+            isShared = true;
+          }
+        });
+      }
+      if (isShared) {
+        intersect.push(item);
+      }
+    });
+    return intersect;
   };
+
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
+    var argumentsArray = Array.prototype.slice.call(arguments);
+    var difference = [];
+    _.each(array, function(item) {
+      var isUnique = true;
+      for(var i = 1; i < argumentsArray.length; i++) {
+        var argArray = argumentsArray[i]
+        for(var j = 0; j < argArray.length; j++) {
+          if(item === argArray[j]) {
+            isUnique = false;
+          }
+        }
+      }
+      if(isUnique) {
+        difference.push(item)
+      }
+    });
+    return difference;
   };
+
+
 
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.  See the Underbar readme for extra details
@@ -429,5 +504,15 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
+    var alreadyCalled;
+    var result;
+    return function() {
+      if(!alreadyCalled) {
+        setTimeout(function() {
+          result = func.apply(this, arguments);
+          alreadyCalled = true;
+        }, wait)
+      }
+    }
   };
 }());
