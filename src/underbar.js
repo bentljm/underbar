@@ -455,22 +455,22 @@
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
     var argumentsArray = Array.prototype.slice.call(arguments);
-    var intersect = [];
+    var shared = [];
     _.each(argumentsArray[0], function(item) {
       var isShared = false;
       for (var i = 1; i < argumentsArray.length; i++) {
-        var array = argumentsArray[i];
-        _.each(array, function(element) {
+        var argArray = argumentsArray[i];
+        _.each(argArray, function(element) {
           if (item === element) {
             isShared = true;
           }
         });
       }
-      if (isShared) {
-        intersect.push(item);
+      if(isShared) {
+        shared.push(item);
       }
     });
-    return intersect;
+    return shared;
   };
 
 
@@ -478,22 +478,22 @@
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
     var argumentsArray = Array.prototype.slice.call(arguments);
-    var difference = [];
+    var different = [];
     _.each(array, function(item) {
       var isUnique = true;
       for(var i = 1; i < argumentsArray.length; i++) {
         var argArray = argumentsArray[i]
-        for(var j = 0; j < argArray.length; j++) {
-          if(item === argArray[j]) {
+        _.each(argArray, function(element) {
+          if(item === element) {
             isUnique = false;
           }
-        }
+        });
       }
       if(isUnique) {
-        difference.push(item)
+        different.push(item)
       }
     });
-    return difference;
+    return different;
   };
 
 
