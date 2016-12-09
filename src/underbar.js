@@ -49,7 +49,7 @@
     } else {
       return array.slice(array.length - n)
     }
-    
+
   };
 
   // Call iterator(value, key, collection) for each element of collection.
@@ -59,37 +59,14 @@
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
     if(Array.isArray(collection)) {
-      if(iterator.length === 1) {
-        for(var i = 0; i < collection.length; i++) {
-          iterator(collection[i]);
-        }
-      } else if(iterator.length === 2) {
-        for(var i = 0; i < collection.length; i++) {
-          iterator(collection[i], i);
-        }
-    } else if(iterator.length === 3) {
         for(var i = 0; i < collection.length; i++) {
           iterator(collection[i], i, collection);
         }
-      }
     } else {
-       if(iterator.length === 1) {
-        for(var item in collection) {
-          iterator(collection[item]);
-        }
-      } else if(iterator.length === 2) {
-        for(var item in collection) {
-          iterator(collection[item], item);
-        }
-    } else if(iterator.length === 3) {
         for(var item in collection) {
           iterator(collection[item], item, collection);
         }
-      }
     }
-   
-    
-    
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -99,7 +76,6 @@
     // implemented for you. Instead of using a standard `for` loop, though,
     // it uses the iteration helper `each`, which you will need to write.
     var result = -1;
-
     _.each(array, function(item, index) {
       if (item === target && result === -1) {
         result = index;
@@ -146,7 +122,7 @@
     }
     return unique;
   };
-  
+
 
 
 
@@ -183,25 +159,24 @@
   // Reduces an array or object to a single value by repetitively calling
   // iterator(accumulator, item) for each item. accumulator should be
   // the return value of the previous iterator call.
-  //  
+  //
   // You can pass in a starting value for the accumulator as the third argument
   // to reduce. If no starting value is passed, the first element is used as
   // the accumulator, and is never passed to the iterator. In other words, in
   // the case where a starting value is not passed, the iterator is not invoked
   // until the second element, with the first element as its second argument.
-  //  
+  //
   // Example:
   //   var numbers = [1,2,3];
   //   var sum = _.reduce(numbers, function(total, number){
   //     return total + number;
   //   }, 0); // should be 6
-  //  
+  //
   //   var identity = _.reduce([5], function(total, number){
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-
     var current;
     var skipNext;
     if(arguments.length === 3) {
@@ -218,7 +193,7 @@
       }
     });
     return current;
-    
+
 }
 
   // Determine if the array or object contains a given value (using `===`).
@@ -249,7 +224,7 @@
       return cur;
     }, true)
   }
-  
+
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
@@ -291,17 +266,14 @@
      for(var i = 0; i < arguments.length; i++) {
       for (var key in arguments[i]) {
           obj[key] = arguments[i][key];
-
        }
      }
      return obj;
-
-   
   };
-   
-      
- 
-  
+
+
+
+
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
@@ -311,12 +283,9 @@
           if(obj[key] === undefined) {
               obj[key] = arguments[i][key];
           }
-             
-          
        }
      }
      return obj;
-
   };
 
 
@@ -336,7 +305,6 @@
     // time it's called.
     var alreadyCalled = false;
     var result;
-
     // TIP: We'll return a new function that delegates to the old one, but only
     // if it hasn't been called before.
     return function() {
@@ -360,23 +328,18 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
  _.memoize = function(func) {
-      
       var result = {};
-      
-
     return function() {
-      
       if (result[JSON.stringify(arguments)] === undefined) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
         // infromation from one function call to another.
         result[JSON.stringify(arguments)] = func.apply(this, arguments);
-        
       }
       // The new function always returns the originally computed result.
       return result[JSON.stringify(arguments)];
     };
   };
-  
+
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -388,10 +351,8 @@
     var result;
     var argu = Array.prototype.slice.call(arguments).slice(2);
     setTimeout(function() {
-      
         result = func.apply(this, argu);
       }, wait)
-      
   };
 
 
